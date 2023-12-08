@@ -1,0 +1,11 @@
+boto3
+ping3
+Flask
+asyncio
+psycopg2
+sqlalchemy
+cryptography
+flask_migrate
+python-dotenv
+email-validator
+Werkzeug==2.2.2
