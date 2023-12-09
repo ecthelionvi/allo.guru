@@ -23,3 +23,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for declarative models
 Base = declarative_base()
+
+# Create all tables in the database
+Base.metadata.create_all(bind=engine)
