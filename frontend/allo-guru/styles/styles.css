@@ -1,0 +1,118 @@
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.marquee-wrapper {
+  z-index: 1; /* Lower z-index since this is the background element */
+  overflow: hidden;
+  border-radius: 12px; /* Desired border-radius */
+  padding: 3px; /* Adjust to the width of the border you want */
+  background: linear-gradient(to right, #4CAF50, #8BC34A); /* Gradient background */
+  width: 68%; /* Full width of the parent container */
+  min-height: 40px; /* Minimum height to ensure it's visible */
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
+
+.marquee-container {
+  display: flex; /* Use flexbox to center the child elements */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  position: relative; /* Relative to the marquee-wrapper */
+  width: calc(100% - 6px); /* Calculate width, accounting for marquee-wrapper padding */
+  margin: 3px; /* Margin to push the content away from the edges */
+  background-color: white; /* Background color for the container */
+  border-radius: 8px; /* Desired border-radius */
+}
+
+.serviceMessage {
+  display: block; /* Use block to fill the width of the flex container */
+  width: 100%; /* Full width to ensure it's visible */
+  animation: marquee 8s linear infinite;
+  color: #4CAF50; /* Text color */
+  font-weight: bold;
+  white-space: nowrap; /* Keep text in a single line for marquee effect */
+}
+
+
+.inputField {
+  padding: 12px; /* Adjust padding to match button's height */
+  border: 1px solid #ccc; /* Example border, can remove if not needed */
+  border-radius: 12px; /* Match button's border-radius */
+  margin-right: 10px;
+  outline: none; /* Remove outline to match button's style */
+  font-size: 16px; /* Match button's font size */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.subscribeButton {
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  padding: 12px 24px; /* Padding for size */
+  height: 100%; /* Ensure the button height matches the input field */
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+  /* Rest of your styles */
+}
+
+.container {
+  font-family: -apple-system;
+  margin: 0 auto;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+  z-index: 1; /* Ensure the logo has a lower stacking order */
+  margin-bottom: 0;
+}
+
+.alertMessage {
+  color: #4CAF50;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.formElement {
+  display: flex;
+  justify-content: center; /* Centers children elements horizontally */
+  align-items: center; /* Centers children elements vertically */
+  width: 65%; /* Set width to full width of the container */
+  margin: 24px 0; /* Adjust margin as needed for spacing around the form */
+}
+
+.inputField {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.submitButton {
+  flex-shrink: 0;
+}
+
+.errorMessage {
+  color: red;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.smsMessage {
+  color: #4CAF50;
+  padding: 2px 4px;
+  margin: 24px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}

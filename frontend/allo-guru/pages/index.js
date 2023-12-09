@@ -1,6 +1,6 @@
 // Import necessary React and Next.js components
-import React, { useState } from 'react';
 import Head from 'next/head';
+import React, { useState } from 'react';
 
 // Define the main component, Status, which takes 'serviceStatus' as a prop
 export default function Status({ serviceStatus }) {
@@ -44,42 +44,41 @@ export default function Status({ serviceStatus }) {
     }
   };
 
-  // Style object for consistent element spacing
-  const elementStyle = { margin: '12px 0' };
-
-  // JSX for rendering the component
   return (
-    <div style={{ fontFamily: 'Helvetica', margin: '0 auto', maxWidth: '550px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px' }}>
+    <div className="container">
       <Head>
         <title>Allo Guru</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1 style={elementStyle}>Allo Guru</h1>
-      <p style={elementStyle}>{serviceStatus.message}</p>
+      <img src="/logo.png" alt="Allo Guru Logo" className="logo" />
 
-      <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Sign up for email alerts!</p>
+      <div className="marquee-wrapper">
+        <div className="marquee-container">
+          <p className="serviceMessage">{serviceStatus.message}</p>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ ...elementStyle, width: '55%', display: 'flex', alignItems: 'center' }}>
+      <p className="alertMessage">Sign up for email alerts!</p>
+
+      <form onSubmit={handleSubmit} className="formElement">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
-          style={{ flex: 1, marginRight: '10px' }}
+          className="inputField"
         />
-        <button type="submit" style={{ flexShrink: 0 }}>Subscribe</button>
-        {emailError && <p style={{ color: 'red', margin: '10px 0', width: '100%' }}>{emailError}</p>}
+        <button type="submit" className="subscribeButton">Subscribe</button>
+        {emailError && <p className="errorMessage">{emailError}</p>}
       </form>
 
-      {submitMessage && <p style={elementStyle}>{submitMessage}</p>}
+      {submitMessage && <p className="formElement">{submitMessage}</p>}
 
-      <div className="sms_message" style={{ backgroundColor: 'black', color: 'white', padding: '2px 4px', marginTop: '12px' }}>
-        <code>send "subscribe" to (417) 383 2556 for SMS Alerts</code>
-      </div>
+      <p className="smsMessage">Sign up for sms alerts @ 417-383-2556</p>
 
-      <footer style={elementStyle}>
+      <footer className="footer">
         <p>Made with ❤️ in Nebraska</p>
       </footer>
     </div>
