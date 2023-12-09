@@ -5,7 +5,7 @@ server {
     server_tokens off;
 
     # Change these to your domain
-    server_name yourdomain.com www.yourdomain.com;
+    server_name allo.guru www.allo.guru;
 
     # Limit Request Sizes
     client_max_body_size 10M; 
