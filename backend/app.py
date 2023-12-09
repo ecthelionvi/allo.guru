@@ -16,8 +16,9 @@ from models import ServiceStatus, EmailSubscription, SMSSubscription
 app = Flask(__name__)
 encryptor = Encryptor()
 
-# Enable Cross-Origin Resource Sharing (CORS)
-CORS(app)
+# Allow requests from any origin during development
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 
 # Context manager for handling database sessions
 @contextmanager
@@ -31,6 +32,7 @@ def get_session():
         raise e
     finally:
         session.close()
+
 
 # Route to get the current service status
 @app.route("/api/status", methods=["GET"])
@@ -58,6 +60,7 @@ def get_status():
 
         return jsonify(response_data)
 
+
 # Route to handle email subscription
 @app.route("/api/subscribe", methods=["POST"])
 def subscribe():
@@ -80,7 +83,7 @@ def subscribe():
             session.query(EmailSubscription).filter_by(email_hash=email_hash).first()
         )
         if existing_subscription:
-            return "Email already subscribed.", 409
+            return "Email already subscribed", 409
 
         # Create new subscription if not already subscribed
         token = secrets.token_urlsafe(16)
@@ -90,7 +93,9 @@ def subscribe():
         session.add(subscription)
         session.commit()
 
-        return "Successfully subscribed to notifications.", 200
+
+        return jsonify({"message": "Successfully subscribed to notifications"}), 200
+
 
 # Route to handle email unsubscription
 @app.route("/api/unsubscribe", methods=["GET"])
@@ -112,7 +117,8 @@ def unsubscribe():
         session.delete(subscription)
         session.commit()
 
-        return "You have been successfully unsubscribed.", 200
+        return jsonify({"message": "Successfully unsubscribed from notifications"}), 200
+
 
 # Route to handle SMS replies and subscriptions
 @app.route("/api/sms", methods=["POST"])
@@ -167,6 +173,7 @@ def sms_reply():
 
     return str(resp)
 
+
 # Function to initialize the Flask application
 def start_flask_app():
     # Create a scoped session
@@ -191,6 +198,7 @@ def start_flask_app():
         session.rollback()
     finally:
         session.remove()
+
 
 # Start the Flask application
 start_flask_app()

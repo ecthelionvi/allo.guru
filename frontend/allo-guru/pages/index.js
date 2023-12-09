@@ -27,7 +27,7 @@ export default function Status({ serviceStatus }) {
 
     try {
       // Send a POST request to the subscribe API endpoint
-      const response = await fetch('https://0.0.0.0:8000/api/subscribe', {
+      const response = await fetch('https://www.allo.guru/api/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -35,12 +35,13 @@ export default function Status({ serviceStatus }) {
         body: formData,
       });
 
-      // Read and set the response message
-      const message = await response.text();
-      setSubmitMessage(message);
+      // Directly read and parse the JSON response
+      const jsonResponse = await response.json();
+      setSubmitMessage(jsonResponse.message);
+
     } catch (error) {
       console.error('Error submitting email:', error);
-      setSubmitMessage('Error submitting email.');
+      setSubmitMessage('Error submitting email');
     }
   };
 
@@ -87,7 +88,7 @@ export default function Status({ serviceStatus }) {
 
 // Function to fetch service status from the server side before rendering the page
 export async function getServerSideProps() {
-  const apiUrl = 'http://0.0.0.0:8000/api/status';
+  const apiUrl = 'https://www.allo.guru/api/status';
 
   try {
     // Fetch the service status from the API
