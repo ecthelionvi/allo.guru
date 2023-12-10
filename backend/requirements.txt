@@ -1,12 +1,14 @@
 boto3
 ping3
 Flask
+pytest
 twilio
 asyncio
 psycopg2
 gunicorn
 sqlalchemy
 flask_cors
+pytest-flask
 cryptography
 flask_migrate
 python-dotenv
