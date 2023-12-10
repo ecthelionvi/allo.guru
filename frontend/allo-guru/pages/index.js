@@ -49,13 +49,20 @@ export default function Status({ serviceStatus }) {
         body: formData,
       });
 
-      // Directly read and parse the JSON response
-      const jsonResponse = await response.json();
-      setSubmitMessage(jsonResponse.message);
+      const jsonResponse = await response.json(); // Always parse the JSON response
+
+      if (!response.ok) {
+        // If the response status is not OK, use the error message from the JSON response
+        setSubmitMessage(jsonResponse.message);
+      } else {
+        // If the response is OK, use the success message
+        setSubmitMessage(jsonResponse.message);
+      }
 
     } catch (error) {
       console.error('Error submitting email:', error);
-      setSubmitMessage('Error submitting email');
+      // This block now only catches network errors or issues with the fetch request itself
+      setSubmitMessage('Network error or issue with the request');
     }
   };
 

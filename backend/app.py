@@ -76,7 +76,7 @@ def subscribe():
             # Create a unique hash of the email for identification
             email_hash = hashlib.sha256(email.encode()).hexdigest()
         except EmailNotValidError as e:
-            return str(e), 400
+            return jsonify({"message": str(e)}), 400
 
         # Check for existing subscription
         existing_subscription = (
