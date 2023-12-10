@@ -14,7 +14,7 @@ describe('Status Page Tests', () => {
   it('Shows error for invalid email', () => {
     cy.get('.inputField').clear().type('test@example.com');
     cy.get('.subscribeButton').click();
-    cy.contains('.errorMessage', 'Invalid email address');
+    cy.contains('.formElement', 'The domain name example.com does not accept email.');
   });
 
   it('Shows success message after subscribing', () => {
