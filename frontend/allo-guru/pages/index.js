@@ -1,13 +1,27 @@
-// Import necessary React and Next.js components
 import Head from 'next/head';
-import React, { useState } from 'react';
+import Image from 'next/image';
+import React, { useState, useEffect, useRef } from 'react';
 
-// Define the main component, Status, which takes 'serviceStatus' as a prop
 export default function Status({ serviceStatus }) {
   // State hooks for managing form input and messages
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [submitMessage, setSubmitMessage] = useState('');
+
+  // New state hook for tracking if the logo has loaded
+  const [logoLoaded, setLogoLoaded] = useState(false);
+
+  // Refs for the input field and submit button
+  const inputRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  // State for storing the combined width
+  const [marqueeWidth, setMarqueeWidth] = useState('auto');
+
+  // Function to handle logo load
+  const handleLogoLoad = () => {
+    setLogoLoaded(true);
+  };
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -45,6 +59,23 @@ export default function Status({ serviceStatus }) {
     }
   };
 
+  useEffect(() => {
+    const calculateWidth = () => {
+      if (inputRef.current && buttonRef.current) {
+        const inputWidth = inputRef.current.offsetWidth;
+        const buttonWidth = buttonRef.current.offsetWidth;
+        setMarqueeWidth(`${inputWidth + buttonWidth}px`);
+      }
+    };
+
+    // Calculate the width on mount and window resize
+    window.addEventListener('resize', calculateWidth);
+    calculateWidth();
+
+    // Cleanup the event listener
+    return () => window.removeEventListener('resize', calculateWidth);
+  }, []);
+
   return (
     <div className="container">
       <Head>
@@ -52,9 +83,17 @@ export default function Status({ serviceStatus }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <img src="/logo.png" alt="Allo Guru Logo" className="logo" />
+      <Image
+        src="/logo.png"
+        alt="Allo Guru Logo"
+        className="logo"
+        onLoadingComplete={handleLogoLoad}
+        width={200} // specify width
+        height={100} // specify height
+        priority // to preload the image
+      />
 
-      <div className="marquee-wrapper">
+      <div className="marquee-wrapper" style={{ width: marqueeWidth }}>
         <div className="marquee-container">
           <p className="serviceMessage">{serviceStatus.message}</p>
         </div>
@@ -64,6 +103,7 @@ export default function Status({ serviceStatus }) {
 
       <form onSubmit={handleSubmit} className="formElement">
         <input
+          ref={inputRef}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -71,13 +111,13 @@ export default function Status({ serviceStatus }) {
           required
           className="inputField"
         />
-        <button type="submit" className="subscribeButton">Subscribe</button>
+        <button ref={buttonRef} type="submit" className="subscribeButton">Subscribe</button>
         {emailError && <p className="errorMessage">{emailError}</p>}
       </form>
 
       {submitMessage && <p className="formElement">{submitMessage}</p>}
 
-      <p className="smsMessage">Sign up for sms alerts @ 417-383-2556</p>
+      <p className="smsMessage">Send <span className="subscribe">Subscribe</span> to 417-383-2556 for SMS Alerts</p>
 
       <footer className="footer">
         <p>Made with ❤️ in Nebraska</p>

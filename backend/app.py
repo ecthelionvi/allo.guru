@@ -83,7 +83,7 @@ def subscribe():
             session.query(EmailSubscription).filter_by(email_hash=email_hash).first()
         )
         if existing_subscription:
-            return "Email already subscribed", 409
+            return jsonify({"message": "You're already subscribed to notifications"}), 409
 
         # Create new subscription if not already subscribed
         token = secrets.token_urlsafe(16)

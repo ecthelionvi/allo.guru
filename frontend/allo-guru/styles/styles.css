@@ -1,6 +1,6 @@
 @keyframes marquee {
   0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  100% { transform: translateX(-120%); }
 }
 
 .marquee-wrapper {
@@ -9,7 +9,7 @@
   border-radius: 12px; /* Desired border-radius */
   padding: 3px; /* Adjust to the width of the border you want */
   background: linear-gradient(to right, #4CAF50, #8BC34A); /* Gradient background */
-  width: 68%; /* Full width of the parent container */
+  width: 65%; /* Full width of the parent container */
   min-height: 40px; /* Minimum height to ensure it's visible */
   margin-top: -20px;
   margin-bottom: 20px;
@@ -29,7 +29,7 @@
 .serviceMessage {
   display: block; /* Use block to fill the width of the flex container */
   width: 100%; /* Full width to ensure it's visible */
-  animation: marquee 8s linear infinite;
+  animation: marquee 10s linear infinite;
   color: #4CAF50; /* Text color */
   font-weight: bold;
   white-space: nowrap; /* Keep text in a single line for marquee effect */
@@ -80,9 +80,12 @@
 }
 
 .alertMessage {
-  color: #4CAF50;
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 500;
+  background: linear-gradient(to right, #4CAF50, #8BC34A);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .formElement {
@@ -109,10 +112,18 @@
 }
 
 .smsMessage {
-  color: #4CAF50;
   padding: 2px 4px;
   margin: 18px;
   font-size: 18px;
-  font-weight: bold;
   text-align: center;
+  font-weight: 500;
+  background: linear-gradient(to right, #4CAF50, #8BC34A);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subscribe {
+  color: #4CAF50;
+  font-weight: bold;
 }
