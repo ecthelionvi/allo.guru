@@ -47,7 +47,7 @@
 }
 
 .subscribeButton {
-  background-color: #4CAF50; /* Green background */
+  background: linear-gradient(to right, #4CAF50, #8BC34A);
   color: white; /* White text */
   padding: 12px 24px; /* Padding for size */
   height: 100%; /* Ensure the button height matches the input field */

@@ -99,7 +99,7 @@ export default function Status({ serviceStatus }) {
         </div>
       </div>
 
-      <p className="alertMessage">Sign up for email alerts!</p>
+      <p className="alertMessage">Sign up for email alerts</p>
 
       <form onSubmit={handleSubmit} className="formElement">
         <input
@@ -117,7 +117,7 @@ export default function Status({ serviceStatus }) {
 
       {submitMessage && <p className="formElement">{submitMessage}</p>}
 
-      <p className="smsMessage">Send <span className="subscribe">Subscribe</span> to 417-383-2556 for SMS Alerts</p>
+      <p className="smsMessage">Send <span className="subscribe">Subscribe</span> to 417-383-2556 for SMS alerts</p>
 
       <footer className="footer">
         <p>Made with ❤️ in Nebraska</p>
