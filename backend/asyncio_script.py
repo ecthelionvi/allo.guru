@@ -58,7 +58,7 @@ def generate_unsubscribe_link(token):
     """
     Generates an unsubscribe link for email notifications.
     """
-    base_url = "http://localhost:8000/api/unsubscribe"
+    base_url = "http://www.allo.guru/api/unsubscribe"
     unsubscribe_link = f"{base_url}?token={token}"
     return unsubscribe_link
 
