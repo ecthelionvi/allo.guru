@@ -150,7 +150,7 @@ async def main():
     The main function to run the ISP check loop.
     """
     while True:
-        await asyncio.sleep(10)  # Wait for 10 seconds before next check
+        await asyncio.sleep(30)  # Wait for 10 seconds before next check
         await check_isp_and_publish()
 
 if __name__ == "__main__":
