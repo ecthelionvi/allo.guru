@@ -11,7 +11,7 @@
   background: linear-gradient(to right, #4CAF50, #8BC34A); /* Gradient background */
   width: 65%; /* Full width of the parent container */
   min-height: 40px; /* Minimum height to ensure it's visible */
-  margin-top: -20px;
+  margin-top: -34px;
   margin-bottom: 20px;
 }
 
@@ -73,10 +73,11 @@
 }
 
 .logo {
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   z-index: 1; /* Ensure the logo has a lower stacking order */
   margin-bottom: 0;
+  margin-top: -42px;
 }
 
 .alertMessage {
@@ -93,7 +94,7 @@
   justify-content: center; /* Centers children elements horizontally */
   align-items: center; /* Centers children elements vertically */
   width: 65%; /* Set width to full width of the container */
-  margin: 24px 0; /* Adjust margin as needed for spacing around the form */
+  margin: 22px 0; /* Adjust margin as needed for spacing around the form */
 }
 
 .inputField {
@@ -126,4 +127,12 @@
 .subscribe {
   color: #4CAF50;
   font-weight: bold;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 48px; /* Space below the title */
+  margin-top: -60px; /* Space above the title */
 }

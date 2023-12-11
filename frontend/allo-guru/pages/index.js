@@ -100,6 +100,8 @@ export default function Status({ serviceStatus }) {
         priority // to preload the image
       />
 
+      <div className="title"><p>Real Time Outage Monitoring</p></div>
+
       <div className="marquee-wrapper" style={{ width: marqueeWidth }}>
         <div className="marquee-container">
           <p className="serviceMessage">{serviceStatus.message}</p>
