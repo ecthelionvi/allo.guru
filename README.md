@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/Logo.png" alt="Allo Guru Logo" width="500" height="500">
+  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/Logo.png" alt="Allo Guru Logo" width="800" height="800">
 </p>
 
 ## 📋 Project Overview
