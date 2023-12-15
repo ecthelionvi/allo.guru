@@ -1,4 +1,6 @@
-# Allo Guru 🌐
+<h1 align="center">
+🐸 Allo Guru 
+</h1>
 
 ## Project Overview 📋
 Allo Guru is an integrated service monitoring and notification system 🚨. It provides real-time status updates and alerts through a web interface, email, and SMS. This project is a showcase of various technologies and programming techniques.
@@ -40,6 +42,6 @@ Allo Guru is an integrated service monitoring and notification system 🚨. It p
 ## Acknowledgments 🙏
 Special thanks to all the open-source projects and APIs that have contributed to this project.
 
----
-
-Made with ❤️ in Nebraska
+<h3 align="center">
+Made with ❤️  in Nebraska
+</h3>
