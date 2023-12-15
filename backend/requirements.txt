@@ -1,8 +1,10 @@
+PyJWT
 boto3
 ping3
 Flask
 pytest
 twilio
+aiohttp
 asyncio
 psycopg2
 gunicorn
@@ -14,3 +16,4 @@ flask_migrate
 python-dotenv
 email-validator
 Werkzeug==2.2.2
+Flask-JWT-Extended

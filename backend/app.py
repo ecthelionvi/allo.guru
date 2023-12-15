@@ -1,20 +1,40 @@
+import os
 import hashlib
 import secrets
 from flask import jsonify
 from flask_cors import CORS
 from datetime import datetime
+from datetime import timedelta
+from dotenv import load_dotenv
 from config import SessionLocal
 from flask import Flask, request
 from encryption import Encryptor
+from flask import render_template
 from contextlib import contextmanager
 from sqlalchemy.orm import scoped_session
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from twilio.twiml.messaging_response import MessagingResponse
 from email_validator import validate_email, EmailNotValidError
-from models import ServiceStatus, EmailSubscription, SMSSubscription
+from models import (
+    ServiceStatus,
+    EmailSubscription,
+    SMSSubscription,
+    ISPEndpoint,
+    Superuser,
+)
 
 # Create a Flask application instance
 app = Flask(__name__)
 encryptor = Encryptor()
+jwt = JWTManager(app)
+
+load_dotenv()
+SUPERUSER_NAME = os.getenv("SUPERUSER_NAME")
+SUPERUSER_PASSWORD = os.getenv("SUPERUSER_PASSWORD")
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+DEFAULT_ISP_ENDPOINTS = ["216.75.112.220", "216.75.120.220"]
 
 # Allow requests from any origin during development
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -32,6 +52,69 @@ def get_session():
         raise e
     finally:
         session.close()
+
+
+# Route to handle user login
+@app.route("/api/login", methods=["POST"])
+def login():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    # Authenticate user
+    with get_session() as session:
+        user = session.query(Superuser).filter_by(username=username).first()
+        if user and user.check_password(password):
+            # Create JWT token
+            expires = timedelta(days=1)  # Token expires in one day
+            access_token = create_access_token(identity=username, expires_delta=expires)
+            return jsonify(access_token=access_token), 200
+        else:
+            return jsonify({"msg": "Bad username or password"}), 401
+
+
+# Route to get all ISP endpoints
+@app.route("/api/isp_endpoints", methods=["GET"])
+def get_isp_endpoints():
+    with get_session() as session:
+        # Fetch all ISP endpoints from the database
+        endpoints = session.query(ISPEndpoint).all()
+        # Extract the address from each endpoint
+        isp_endpoints = [endpoint.address for endpoint in endpoints]
+        return jsonify({"endpoints": isp_endpoints})
+
+
+# Route to update ISP endpoints
+@app.route("/api/isp_endpoints", methods=["POST"])
+@jwt_required()
+def update_isp_endpoints():
+    # Get the identity of the current user from the JWT
+    current_user_username = get_jwt_identity()
+
+    # Optional: You can add additional checks here to confirm that the current user is a superuser
+    with get_session() as session:
+        user = (
+            session.query(Superuser).filter_by(username=current_user_username).first()
+        )
+        if not user:
+            return jsonify({"message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    new_endpoints = data.get("endpoints")
+    if not new_endpoints or not isinstance(new_endpoints, list):
+        return jsonify({"message": "Bad Request. 'endpoints' must be a list."}), 400
+
+    with get_session() as session:
+        # Remove all current endpoints
+        session.query(ISPEndpoint).delete()
+
+        # Add new ISP endpoints
+        for address in new_endpoints:
+            new_endpoint = ISPEndpoint(address=address)
+            session.add(new_endpoint)
+
+        session.commit()
+
+        return jsonify({"message": "ISP endpoints updated successfully"}), 200
 
 
 # Route to get the current service status
@@ -83,7 +166,10 @@ def subscribe():
             session.query(EmailSubscription).filter_by(email_hash=email_hash).first()
         )
         if existing_subscription:
-            return jsonify({"message": "You're already subscribed to notifications"}), 409
+            return (
+                jsonify({"message": "You're already subscribed to notifications"}),
+                409,
+            )
 
         # Create new subscription if not already subscribed
         token = secrets.token_urlsafe(16)
@@ -93,7 +179,6 @@ def subscribe():
         session.add(subscription)
         session.commit()
 
-
         return jsonify({"message": "Successfully subscribed to notifications"}), 200
 
 
@@ -102,14 +187,23 @@ def subscribe():
 def unsubscribe():
     token = request.args.get("token")
     if not token:
-        return "Invalid unsubscribe request. Please check your link.", 400
+        return (
+            render_template(
+                "message.html",
+                message="Invalid unsubscribe request. Please check your link.",
+            ),
+            400,
+        )
 
     with get_session() as session:
         # Find the subscription by its token
         subscription = session.query(EmailSubscription).filter_by(token=token).first()
         if not subscription:
             return (
-                "Invalid unsubscribe link. Please try again with the correct link.",
+                render_template(
+                    "message.html",
+                    message="Invalid unsubscribe link. Please try again with the correct link.",
+                ),
                 400,
             )
 
@@ -117,7 +211,12 @@ def unsubscribe():
         session.delete(subscription)
         session.commit()
 
-        return jsonify({"message": "Successfully unsubscribed from notifications"}), 200
+        return (
+            render_template(
+                "message.html", message="Successfully unsubscribed from notifications"
+            ),
+            200,
+        )
 
 
 # Route to handle SMS replies and subscriptions
@@ -174,6 +273,33 @@ def sms_reply():
     return str(resp)
 
 
+def populate_default_isp_endpoints():
+    with get_session() as session:
+        # Check if any ISP endpoints already exist
+        if session.query(ISPEndpoint).first() is None:
+            # Add default endpoints
+            for endpoint in DEFAULT_ISP_ENDPOINTS:
+                new_endpoint = ISPEndpoint(address=endpoint)
+                session.add(new_endpoint)
+            session.commit()
+            print("Default ISP endpoints added to the database.")
+        else:
+            print("ISP endpoints already exist in the database.")
+
+
+def create_default_superuser():
+    with get_session() as session:
+        superuser_exists = (
+            session.query(Superuser).filter_by(username=SUPERUSER_NAME).first()
+            is not None
+        )
+        if not superuser_exists:
+            superuser = Superuser(username=SUPERUSER_NAME)
+            superuser.set_password(SUPERUSER_PASSWORD)
+            session.add(superuser)
+            session.commit()
+
+
 # Function to initialize the Flask application
 def start_flask_app():
     # Create a scoped session
@@ -202,6 +328,8 @@ def start_flask_app():
 
 # Start the Flask application
 start_flask_app()
+create_default_superuser()
+populate_default_isp_endpoints()
 
 if __name__ == "__main__":
     app.run(debug=False, use_reloader=False)

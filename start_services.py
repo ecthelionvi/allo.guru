@@ -1,33 +1,41 @@
 import subprocess
+import signal
+import sys
 
 def run_command(command, cwd=None, background=False):
-    """
-    Execute a command as a subprocess.
-    Args:
-    - command: Command to execute.
-    - cwd: Directory to execute the command in.
-    - background: Run in background if True.
-    Uses subprocess.Popen for background tasks, subprocess.run otherwise.
-    """
     if background:
-        subprocess.Popen(command, cwd=cwd, shell=True)
+        return subprocess.Popen(command, cwd=cwd, shell=True)
     else:
-        subprocess.run(command, cwd=cwd, shell=True)
+        return subprocess.run(command, cwd=cwd, shell=True)
 
 def start_flask_app():
-    run_command("gunicorn -w 4 -b 0.0.0.0:8000 app:app --log-level info", cwd="/usr/src/app/backend", background=True)
+    return run_command("gunicorn -w 4 -b 0.0.0.0:8000 app:app --log-level info", cwd="/usr/src/app/backend", background=True)
 
 def start_next_js_app():
-    run_command("npm start", cwd="/usr/src/app/frontend", background=True)
-
-def start_nginx():
-    run_command("nginx -g 'daemon off;'")
+    return run_command("npm start", cwd="/usr/src/app/frontend", background=True)
 
 def start_asynchronous_tasks():
-    run_command("python3 asyncio_script.py", cwd="/usr/src/app/backend", background=False)
+    return run_command("python3 asyncio_script.py", cwd="/usr/src/app/backend", background=True)
+
+def start_nginx():
+    # Run Nginx in the foreground
+    run_command("nginx -g 'daemon off;'", background=False)
+
+def signal_handler(sig, frame):
+    print("Stopping servers...")
+    for process in background_processes:
+        process.terminate()
+    sys.exit(0)
 
 if __name__ == "__main__":
-    start_flask_app()
-    start_next_js_app()
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    background_processes = [
+        start_flask_app(),
+        start_next_js_app(),
+        start_asynchronous_tasks()
+    ]
+
+    # Nginx is run last and in the foreground to keep the script alive.
     start_nginx()
-    input("Press Enter to exit and stop all servers\n")

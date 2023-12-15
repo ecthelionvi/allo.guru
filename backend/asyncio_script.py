@@ -1,6 +1,6 @@
 import os
-import time
 import boto3
+import aiohttp
 import asyncio
 from ping3 import ping
 from datetime import datetime
@@ -37,9 +37,6 @@ ses_client = boto3.client(
 # Variable to store the previous state of the ISP
 previous_state = None
 
-# List of ISP endpoints to ping
-isp_endpoints = ["216.75.112.220", "216.75.120.220"]
-
 def send_sms_notification(message, recipients):
     """
     Sends SMS notifications using Twilio.
@@ -54,6 +51,7 @@ def send_sms_notification(message, recipients):
         except Exception as e:
             print(f"Error sending SMS: {e}, to {decrypted_phone}")
 
+
 def generate_unsubscribe_link(token):
     """
     Generates an unsubscribe link for email notifications.
@@ -61,6 +59,7 @@ def generate_unsubscribe_link(token):
     base_url = "http://www.allo.guru/api/unsubscribe"
     unsubscribe_link = f"{base_url}?token={token}"
     return unsubscribe_link
+
 
 def send_email_notification(subject, message, recipients):
     """
@@ -77,7 +76,9 @@ def send_email_notification(subject, message, recipients):
             unsubscribe_token = subscriber.token
             unsubscribe_link = generate_unsubscribe_link(unsubscribe_token)
 
-            full_message = f"{message}\n\nTo unsubscribe, please click here: {unsubscribe_link}"
+            full_message = (
+                f"{message}\n\nTo unsubscribe, please click here: {unsubscribe_link}"
+            )
 
             try:
                 ses_client.send_email(
@@ -96,7 +97,27 @@ def send_email_notification(subject, message, recipients):
     finally:
         session.remove()
 
-async def check_isp_and_publish():
+
+async def fetch_isp_endpoints(api_url):
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(api_url) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return data.get(
+                        "endpoints", []
+                    )  # Assuming the API returns a JSON with an 'endpoints' key
+                else:
+                    print(
+                        f"Failed to fetch ISP endpoints. Status code: {response.status}"
+                    )
+                    return None
+        except Exception as e:
+            print(f"Error fetching ISP endpoints: {e}")
+            return None
+
+
+async def check_isp_and_publish(api_url):
     """
     Checks the status of ISP endpoints and publishes updates.
     """
@@ -106,10 +127,12 @@ async def check_isp_and_publish():
     session = scoped_session(SessionLocal)
 
     try:
-        for endpoint in isp_endpoints:
-            if not ping(endpoint):
-                current_state = False
-                break
+        new_endpoints = await fetch_isp_endpoints(api_url)
+        if new_endpoints:
+            for endpoint in new_endpoints:
+                if not ping(endpoint):
+                    current_state = False
+                    break
 
         if current_state != previous_state:
             formatted_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -125,7 +148,9 @@ async def check_isp_and_publish():
                 service_status.status = "online" if current_state else "offline"
                 service_status.updated_at = datetime.now()
             else:
-                new_status = ServiceStatus(status="online" if current_state else "offline")
+                new_status = ServiceStatus(
+                    status="online" if current_state else "offline"
+                )
                 session.add(new_status)
 
             session.commit()
@@ -145,13 +170,17 @@ async def check_isp_and_publish():
     finally:
         session.remove()
 
-async def main():
+
+async def main(api_url):
     """
     The main function to run the ISP check loop.
     """
     while True:
         await asyncio.sleep(30)  # Wait for 10 seconds before next check
-        await check_isp_and_publish()
+        await check_isp_and_publish(api_url)
+        print("Checked ISP status")
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    api_url = "https://allo.guru/api/isp_endpoints"
+    asyncio.run(main(api_url))
