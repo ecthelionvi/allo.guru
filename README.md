@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/NeoComposer.png" alt="NeoComposer">
+  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/Allo-Guru-infra.png" alt="Allo Guru">
 </p>
 
 ## Project Overview 📋
