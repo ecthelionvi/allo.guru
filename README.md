@@ -2,12 +2,16 @@
 🐸 Allo Guru 
 </h1>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/Allo-Guru-Logo.png" alt="Allo Guru Logo">
+</p>
+
 ## 📋 Project Overview
 Allo Guru is an integrated service monitoring and notification system 🚨. It provides real-time status updates and alerts through a web interface, email, and SMS. This project is a showcase of various technologies and programming techniques.
 
 ## 💻 Infrastructure  
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/Allo-Guru-infra.png" alt="Allo Guru">
+  <img src="https://raw.githubusercontent.com/ecthelionvi/Images/main/Allo-Guru-Infra.png" alt="Allo Guru Infra">
 </p>
 
 ### 🛠️ Core Components
